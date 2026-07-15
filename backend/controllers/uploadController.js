@@ -2,13 +2,7 @@ const path = require("path");
 
 const Note = require("../models/Note");
 
-console.log("Note:", Note);
-console.log("Type of Note:", typeof Note);
-
 const extractTXT = require("../extractors/txtExtractor");
-
-console.log("extractTXT:", extractTXT);
-console.log("Type of extractTXT:", typeof extractTXT);
 
 const extractPDF = require("../extractors/pdfExtractor");
 
@@ -39,6 +33,11 @@ const uploadFile = async (req, res) => {
         message: "Unsupported file type.",
       });
     }
+    if (!content || content.trim() === "") {
+      return res.status(400).json({
+        message: "The uploaded file contains no readable text.",
+      });
+    }
     const note = new Note({
       filename: req.file.originalname,
       fileType: req.file.mimetype,
@@ -49,15 +48,16 @@ const uploadFile = async (req, res) => {
 
     // Return success for now
     res.status(200).json({
-      message: "File uploaded and stored successfully!",
+      message: "File uploaded successfully!",
       filename: req.file.filename,
       originalName: req.file.originalname,
+      extractedText: content,
     });
   } catch (error) {
     console.error(error);
 
     res.status(500).json({
-      message: "Server Error",
+      message: error.message || "Internal Server Error",
     });
   }
 };
