@@ -3,10 +3,10 @@ const path = require("path");
 const Note = require("../models/Note");
 
 const extractTXT = require("../extractors/txtExtractor");
-
 const extractPDF = require("../extractors/pdfExtractor");
-
 const extractDOCX = require("../extractors/docxExtractor");
+
+const generateQuiz = require("../services/aiService");
 
 const uploadFile = async (req, res) => {
   try {
@@ -33,25 +33,34 @@ const uploadFile = async (req, res) => {
         message: "Unsupported file type.",
       });
     }
+
     if (!content || content.trim() === "") {
       return res.status(400).json({
         message: "The uploaded file contains no readable text.",
       });
     }
+
+    // Generate quiz using AI
+    const quiz = await generateQuiz(content);
+    const quizData = JSON.parse(quiz);
+
+    // Save note and quiz to MongoDB
     const note = new Note({
       filename: req.file.originalname,
       fileType: req.file.mimetype,
       content: content,
+      quiz: quizData,
     });
-    //saving new note to the database
+
     await note.save();
 
-    // Return success for now
+    // Send response
     res.status(200).json({
-      message: "File uploaded successfully!",
+      message: "Quiz generated successfully!",
       filename: req.file.filename,
       originalName: req.file.originalname,
-      extractedText: content,
+      totalQuestions: quizData.length,
+      quiz: quizData,
     });
   } catch (error) {
     console.error(error);

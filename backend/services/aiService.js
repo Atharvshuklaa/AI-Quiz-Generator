@@ -1,0 +1,57 @@
+const axios = require("axios");
+
+async function generateQuiz(text) {
+  const prompt = `
+You are an AI Quiz Generator.
+
+Generate exactly 10 multiple-choice questions from the study material below.
+
+Rules:
+- Use ONLY the information given.
+- Each question must have exactly 4 options.
+- Include the correct answer.
+- Return ONLY valid JSON.
+- Do NOT include markdown or explanations.
+
+Return in this format:
+
+[
+  {
+    "question": "...",
+    "options": [
+      "...",
+      "...",
+      "...",
+      "..."
+    ],
+    "answer": "..."
+  }
+]
+
+Study Material:
+${text}
+`;
+
+  const response = await axios.post(
+    "https://openrouter.ai/api/v1/chat/completions",
+    {
+      model: "openrouter/free",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  return response.data.choices[0].message.content;
+}
+
+module.exports = generateQuiz;
