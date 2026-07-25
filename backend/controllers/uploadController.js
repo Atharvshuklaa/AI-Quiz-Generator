@@ -24,6 +24,9 @@ const uploadFile = async (req, res) => {
 
     if (extension === ".txt") {
       content = extractTXT(filePath);
+      console.log("========= EXTRACTED TEXT =========");
+      console.log(content);
+      console.log("=================================");
     } else if (extension === ".pdf") {
       content = await extractPDF(filePath);
     } else if (extension === ".docx") {
@@ -41,9 +44,14 @@ const uploadFile = async (req, res) => {
     }
 
     // Generate quiz using AI
+    // Generate quiz using AI
     const quiz = await generateQuiz(content);
-    const quizData = JSON.parse(quiz);
 
+    console.log("========== AI RESPONSE START ==========");
+    console.log(quiz);
+    console.log("========== AI RESPONSE END ==========");
+
+    const quizData = JSON.parse(quiz);
     // Save note and quiz to MongoDB
     const note = new Note({
       filename: req.file.originalname,

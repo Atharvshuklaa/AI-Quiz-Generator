@@ -9,6 +9,7 @@ import Quiz from "../pages/Quiz/Quiz";
 import Results from "../pages/Results/Results";
 import Review from "../pages/Review/Review";
 import Profile from "../pages/Profile/Profile";
+import Upload from "../pages/Upload/Upload";
 
 function AppRoutes() {
   return (
@@ -18,7 +19,8 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/create-quiz" element={<CreateQuiz />} />
+        <Route path="/upload" element={<Upload />} />
+        <Route path="/createquiz" element={<CreateQuiz />} />
         <Route path="/quiz" element={<Quiz />} />
         <Route path="/results" element={<Results />} />
         <Route path="/review" element={<Review />} />
